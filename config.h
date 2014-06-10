@@ -39,7 +39,7 @@ static const Rule rules[] = {
 };
 
 /* commands */
-static const char *browsercmd[]   = { "firefox", NULL };
+static const char *browsercmd[]   = { "dwb", NULL };
 static const char *termcmd[]      = { "urxvtc", NULL };
 static const char *floattermcmd[] = { "urxvtc", "-title", "Floating", "-geometry","90x24+300+200", NULL };
 static const char *prtscrcmd[]    = { "/home/rcr/scripts/printscreen", NULL };
