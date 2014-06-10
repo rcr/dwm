@@ -7,6 +7,9 @@ static const char normfgcolor[]     = "#696969";
 static const char selbordercolor[]  = "#696969";
 static const char selbgcolor[]      = "#262626";
 static const char selfgcolor[]      = "#e0e0e0";
+static const char urgbordercolor[]  = "#c90000";
+static const char urgbgcolor[]      = "#c90000";
+static const char urgfgcolor[]      = "#262626";
 
 static const char font[]            = "-*-clean-medium-r-*-*-12-*-*-*-*-*-*-*";
 

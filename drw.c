@@ -126,12 +126,12 @@ drw_setscheme(Drw *drw, ClrScheme *scheme) {
 }
 
 void
-drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty, int invert) {
+drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int empty) {
 	int dx;
 
 	if(!drw || !drw->font || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb : drw->scheme->fg->rgb);
+	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb);
 	dx = (drw->font->ascent + drw->font->descent + 2) / 4;
 	if(filled)
 		XFillRectangle(drw->dpy, drw->drawable, drw->gc, x+1, y+1, dx+1, dx+1);
@@ -140,14 +140,14 @@ drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int
 }
 
 void
-drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text, int invert) {
+drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *text) {
 	char buf[256];
 	int i, tx, ty, th, len, olen;
 	Extnts tex;
 
 	if(!drw || !drw->scheme)
 		return;
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->fg->rgb : drw->scheme->bg->rgb);
+	XSetForeground(drw->dpy, drw->gc, drw->scheme->bg->rgb);
 	XFillRectangle(drw->dpy, drw->drawable, drw->gc, x, y, w, h);
 	if(!text || !drw->font)
 		return;
@@ -164,7 +164,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, const char *tex
 	memcpy(buf, text, len);
 	if(len < olen)
 		for(i = len; i && i > len - 3; buf[--i] = '.');
-	XSetForeground(drw->dpy, drw->gc, invert ? drw->scheme->bg->rgb : drw->scheme->fg->rgb);
+	XSetForeground(drw->dpy, drw->gc, drw->scheme->fg->rgb);
 	if(drw->font->set)
 		XmbDrawString(drw->dpy, drw->drawable, drw->font->set, drw->gc, tx, ty, buf, len);
 	else

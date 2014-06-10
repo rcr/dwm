@@ -58,7 +58,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeLast }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeUrg, SchemeLast }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
        NetWMWindowTypeDialog, NetClientList, NetLast }; /* EWMH atoms */
@@ -481,6 +481,9 @@ cleanup(void) {
 	drw_clr_free(scheme[SchemeSel].border);
 	drw_clr_free(scheme[SchemeSel].bg);
 	drw_clr_free(scheme[SchemeSel].fg);
+	drw_clr_free(scheme[SchemeUrg].border);
+	drw_clr_free(scheme[SchemeUrg].bg);
+	drw_clr_free(scheme[SchemeUrg].fg);
 	drw_free(drw);
 	XSync(dpy, False);
 	XSetInputFocus(dpy, PointerRoot, RevertToPointerRoot, CurrentTime);
@@ -704,15 +707,19 @@ drawbar(Monitor *m) {
 	x = 0;
 	for(i = 0; i < LENGTH(tags); i++) {
 		w = TEXTW(tags[i]);
-		drw_setscheme(drw, m->tagset[m->seltags] & 1 << i ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-		drw_text(drw, x, 0, w, bh, tags[i], urg & 1 << i);
-		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i,
-		           occ & 1 << i, urg & 1 << i);
+		if (m->tagset[m->seltags] & 1 << i)
+			drw_setscheme(drw, &scheme[SchemeSel]);
+		else if (urg & 1 << i)
+			drw_setscheme(drw, &scheme[SchemeUrg]);
+		else
+			drw_setscheme(drw, &scheme[SchemeNorm]);
+		drw_text(drw, x, 0, w, bh, tags[i]);
+		drw_rect(drw, x, 0, w, bh, m == selmon && selmon->sel && selmon->sel->tags & 1 << i, occ & 1 << i);
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
 	drw_setscheme(drw, &scheme[SchemeNorm]);
-	drw_text(drw, x, 0, w, bh, m->ltsymbol, 0);
+	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
 	if(m == selmon) { /* status is only drawn on selected monitor */
@@ -722,7 +729,7 @@ drawbar(Monitor *m) {
 			x = xx;
 			w = m->ww - xx;
 		}
-		drw_text(drw, x, 0, w, bh, stext, 0);
+		drw_text(drw, x, 0, w, bh, stext);
 	}
 	else
 		x = m->ww;
@@ -730,12 +737,12 @@ drawbar(Monitor *m) {
 		x = xx;
 		if(m->sel) {
 			drw_setscheme(drw, m == selmon ? &scheme[SchemeSel] : &scheme[SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, m->sel->name, 0);
-			drw_rect(drw, x, 0, w, bh, m->sel->isfixed, m->sel->isfloating, 0);
+			drw_text(drw, x, 0, w, bh, m->sel->name);
+			drw_rect(drw, x, 0, w, bh, m->sel->isfixed, m->sel->isfloating);
 		}
 		else {
 			drw_setscheme(drw, &scheme[SchemeNorm]);
-			drw_text(drw, x, 0, w, bh, NULL, 0);
+			drw_text(drw, x, 0, w, bh, NULL);
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww, bh);
@@ -1525,6 +1532,9 @@ setup(void) {
 	scheme[SchemeNorm].border = drw_clr_create(drw, normbordercolor);
 	scheme[SchemeNorm].bg = drw_clr_create(drw, normbgcolor);
 	scheme[SchemeNorm].fg = drw_clr_create(drw, normfgcolor);
+	scheme[SchemeUrg].border = drw_clr_create(drw, urgbordercolor);
+	scheme[SchemeUrg].fg = drw_clr_create(drw, urgfgcolor);
+	scheme[SchemeUrg].bg = drw_clr_create(drw, urgbgcolor);
 	scheme[SchemeSel].border = drw_clr_create(drw, selbordercolor);
 	scheme[SchemeSel].bg = drw_clr_create(drw, selbgcolor);
 	scheme[SchemeSel].fg = drw_clr_create(drw, selfgcolor);
@@ -1570,8 +1580,6 @@ sigchld(int unused) {
 
 void
 spawn(const Arg *arg) {
-	if(arg->v == dmenucmd)
-		dmenumon[0] = '0' + selmon->num;
 	if(fork() == 0) {
 		if(dpy)
 			close(ConnectionNumber(dpy));
