@@ -18,7 +18,7 @@ static const unsigned int snap      = 25;     /* snap pixel */
 static const Bool showbar           = True;   /* False means no bar */
 static const Bool topbar            = True;   /* False means bottom bar */
 
-static const char *tags[] = {" ! ", " @", " #", " $ ", " % "};
+static const char *tags[] = {" ! ", " @ ", " # ", " $ ", " % "};
 
 /* layout(s) */
 static const float mfact      = 0.55;  /* factor of master area size [0.05..0.95] */

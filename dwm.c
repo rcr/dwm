@@ -730,7 +730,7 @@ drawbar(Monitor *m) {
 		x += w;
 	}
 	w = blw = TEXTW(m->ltsymbol);
-	drw_setscheme(drw, &scheme[SchemeNorm]);
+	drw_setscheme(drw, &scheme[SchemeSel]);
 	drw_text(drw, x, 0, w, bh, m->ltsymbol);
 	x += w;
 	xx = x;
