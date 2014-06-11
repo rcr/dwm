@@ -1,7 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
 /* Status bar colors */
-static const char normbordercolor[] = "#696969";
+static const char normbordercolor[] = "#474747";
 static const char normbgcolor[]     = "#262626";
 static const char normfgcolor[]     = "#696969";
 static const char selbordercolor[]  = "#696969";
